@@ -20,7 +20,7 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const string CsvFilePath = "E:/Code/WpfApp1/sample2.csv";
+        private const string CsvFilePath = "E:/Code/RoomRevise/sample2.csv";
         private static List<EventData>? eventsData;
         private DispatcherTimer dispatcherTimer;
         public MainWindow()
@@ -44,46 +44,75 @@ namespace WpfApp1
         {
             CurrTime.Content = DateTime.Now.ToString("hh:mm ss tt");
             CurrDate.Content = DateTime.Now.ToString("MMMM dd, dddd");
-            foreach (var eventData in eventsData)
-            {
+
             DateTime now = DateTime.Now;
+            DayOfWeek currentDay = now.DayOfWeek;
 
-                DayOfWeek currentDay = now.DayOfWeek;
-                if (currentDay == eventData.DayOfWeek)
-                {
-                    CheckEventDetails(now, eventData);
-                }
+            // Filter events for the current day
+            var todayEvents = eventsData
+                .Where(eventData => eventData.DayOfWeek == currentDay)
+                .ToList();
+
+            // Find the first event that is currently happening
+            var currentEvent = todayEvents.FirstOrDefault(eventData =>
+                now.TimeOfDay >= eventData.StartTime && now.TimeOfDay <= eventData.EndTime);
+
+            var upcomingEvent = todayEvents.FirstOrDefault(eventData => 
+                now.TimeOfDay < eventData.StartTime);
+
+            if (currentEvent != null && upcomingEvent != null)
+            {
+                CurrEventName.Content = currentEvent.EventName;
+                CurrEventTime.Content = $"{currentEvent.StartTime:g} - {currentEvent.EndTime:g}";
+                UpcgName.Content = upcomingEvent.EventName;
+                UpcgTime.Content = $"{upcomingEvent.StartTime:g} - {upcomingEvent.EndTime:g}";
+
             }
-            
-
+            else
+            {
+                // If no current event, clear the UI elements
+                CurrEventName.Content = string.Empty;
+                CurrEventTime.Content = string.Empty;
+            }
         }
 
         void CheckEventDetails(DateTime now, EventData eventData)
         {
-
-            string EventName = eventData.EventName.ToString();
-
+            string EventName = eventData.EventName;
             DateTime current = now.TrimMilliseconds();
             DateTime InitialGoal = DateTime.Today.Add(eventData.StartTime).TrimMilliseconds();
             DateTime EndGoal = DateTime.Today.Add(eventData.EndTime).TrimMilliseconds();
-
             string EventFormat = $"{InitialGoal.ToString("hh:mm tt")} - {EndGoal.ToString("hh:mm tt")}";
+
             if (current >= InitialGoal && current <= EndGoal)
             {
                 CurrEventName.Content = EventName;
                 CurrEventTime.Content = EventFormat;
+
+                // Clear the "Upcoming" UI elements
+                UpcgName.Content = string.Empty;
+                UpcgTime.Content = string.Empty;
             }
-
-
-            if (current < InitialGoal)
+            else if (current < InitialGoal)
             {
                 UpcgName.Content = EventName;
                 UpcgTime.Content = EventFormat;
+
+                // Clear the "Current" UI elements
+                CurrEventName.Content = string.Empty;
+                CurrEventTime.Content = string.Empty;
             }
+            else
+            {
+                // If current is past EndGoal, clear both UI elements
+                CurrEventName.Content = string.Empty;
+                CurrEventTime.Content = string.Empty;
 
-
-
+                UpcgName.Content = string.Empty;
+                UpcgTime.Content = string.Empty;
+            }
         }
+
 
 
         static void LoadCSV(string filePath)
