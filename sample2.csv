@@ -1,0 +1,23 @@
+Day,StartTime,EndTime,EventName
+Monday,08:00:00,10:00:00,Meeting with Team
+Monday,10:30:00,12:30:00,Strategy Meeting
+Monday,12:00:00,14:00:00,Client Call
+Monday,15:00:00,17:00:00,Product Brainstorming
+Tuesday,09:30:00,11:30:00,Project Review
+Tuesday,13:00:00,15:00:00,Client Workshop
+Tuesday,14:00:00,16:00:00,Training Session
+Tuesday,16:30:00,18:00:00,Marketing Review
+Wednesday,09:00:00,11:00:00,Board Meeting
+Wednesday,11:00:00,13:00:00,Team Building
+Wednesday,14:00:00,16:00:00,Team Training
+Wednesday,15:00:00,17:00:00,Client Presentation
+Thursday,10:00:00,12:00:00,Project Planning
+Thursday,13:30:00,13:40:00,Internal Workshop
+Thursday,15:27:00,15:28:00,test32
+Thursday,16:30:00,18:30:00,Innovation Session
+Thursday,18:00:00,20:00:00,Networking Event
+Friday,15:00:00,16:30:00,Weekly Wrap-up
+Saturday,00:53:00,00:53:30,Planning Session
+Saturday,14:30:00,16:30:00,Team Collaboration
+Sunday,11:08:00,11:08:20,Research and Development
+Sunday,16:00:00,18:00:00,Team Social Event
