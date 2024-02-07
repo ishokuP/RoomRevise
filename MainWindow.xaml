@@ -8,6 +8,9 @@
         Title="Scheduler" Height="960" Width="730">
 
     <StackPanel>
+        <StackPanel.Background>
+            <ImageBrush ImageSource="E:\Code\RoomRevise\Background2.png" Stretch="UniformToFill" />
+        </StackPanel.Background>
         <DockPanel>
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
@@ -18,31 +21,35 @@
             </Menu>
             <StackPanel></StackPanel>
         </DockPanel>
-        <StackPanel>
-            <Label HorizontalAlignment="Center" FontSize="100" Margin="0,75" Name="CurrTime" Content="00:00"></Label>
-            <Label HorizontalAlignment="Center" FontSize="25" Margin="0,-75, 0 ,75" Name="CurrDate" Content="January 29, Monday"></Label>
+        <StackPanel >
+            <Label HorizontalAlignment="Center" FontSize="100" Foreground="White" Margin="0,75" Name="CurrTime" Content="00:00" ></Label>
+            <Label HorizontalAlignment="Center" FontSize="25" Foreground="White" Margin="0,-75, 0 ,75" Name="CurrDate" Content="January 29, Monday"></Label>
         </StackPanel>
         <StackPanel Margin="25, 0, 25 ,0">
-            <Label HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="25" Name="CurrEventTitle" Content="Current Event"></Label>
-            <Border BorderThickness="2" BorderBrush="Black" CornerRadius="15">
-                <StackPanel Margin="0,0,0,20">
-                    <Label HorizontalAlignment="Left" FontSize="15" Margin="25,0,0,0" x:Name="CurrEventName" Content="Free Time"/>
-                    <Label HorizontalAlignment="Center" FontSize="25" x:Name="CurrEventTime" Content="No Scheduled Event!"/>
-                </StackPanel>
-            </Border>
-        </StackPanel>
-        <StackPanel Margin="25, 100, 25 ,0">
-            <Label HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="25" >Upcoming Event</Label>
-            <Border BorderThickness="2" BorderBrush="Black" CornerRadius="15"  >
+            <Label HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="25" Foreground="White" Name="CurrEventTitle" Content="Current Event"></Label>
+            <Grid>
+                <Border BorderThickness="2" BorderBrush="Black" CornerRadius="15" Background="Black" Opacity="0.5"/>
                 <StackPanel Margin="10,10,10,20">
-                    <StackPanel Name="UpcgStack">
-                        <Label HorizontalAlignment="Left" FontSize="15" Margin="25,0,0,0" Name="UpcgName">Team Building</Label>
-                        <Label HorizontalAlignment="Center" FontSize="25" Name="UpcgTime">11:00 AM - 01:00PM</Label>
-                    </StackPanel>
-
+                    <Label HorizontalAlignment="Left" FontSize="15"  Margin="25,0,0,0" Foreground="White" x:Name="CurrEventName" Content="Free Time"/>
+                    <Label HorizontalAlignment="Center" FontSize="25"  Foreground="White" x:Name="CurrEventTime" Content="No Scheduled Event!"/>
                 </StackPanel>
-                
-            </Border>
+            </Grid>
+        </StackPanel>
+        
+
+        <StackPanel Margin="25, 100, 25 ,0">
+            <Label HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="25"  Foreground="White"  >Upcoming Event</Label>
+            <Grid>
+                <Border BorderThickness="2" CornerRadius="15" Background="White" Opacity="0.7"/>
+                <StackPanel Margin="10,10,10,20">
+                    <Label HorizontalAlignment="Left" FontSize="15"  Margin="25,0,0,0" Foreground="Black" Name="UpcgName1" Content="Free Time"/>
+                    <Label HorizontalAlignment="Center" FontSize="25"  Foreground="Black" Margin="0,0,0,5" Name="UpcgTime1" Content="No Scheduled Event!"/>
+                    <Label HorizontalAlignment="Left" FontSize="15"  Margin="25,0,0,0" Foreground="Black" Name="UpcgName2" Content="Free Time"/>
+                    <Label HorizontalAlignment="Center" FontSize="25"  Foreground="Black" Margin="0,0,0,5" Name="UpcgTime2" Content="No Scheduled Event!"/>
+                    <Label HorizontalAlignment="Left" FontSize="15"  Margin="25,0,0,0" Foreground="Black" Name="UpcgName3" Content="Free Time"/>
+                    <Label HorizontalAlignment="Center" FontSize="25"  Foreground="Black" Margin="0,0,0,5" Name="UpcgTime3" Content="No Scheduled Event!"/>
+                </StackPanel>
+            </Grid>
         </StackPanel>
 
     </StackPanel>

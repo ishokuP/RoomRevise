@@ -42,6 +42,7 @@ namespace WpfApp1
         }
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
+
             CurrTime.Content = DateTime.Now.ToString("hh:mm ss tt");
             CurrDate.Content = DateTime.Now.ToString("MMMM dd, dddd");
 
@@ -57,15 +58,14 @@ namespace WpfApp1
             var currentEvent = todayEvents.FirstOrDefault(eventData =>
                 now.TimeOfDay >= eventData.StartTime && now.TimeOfDay <= eventData.EndTime);
 
-            var upcomingEvent = todayEvents.FirstOrDefault(eventData => 
-                now.TimeOfDay < eventData.StartTime);
+            var upcomingEvent = todayEvents
+                .Where(eventData => now.TimeOfDay < eventData.StartTime);
 
-            if (currentEvent != null && upcomingEvent != null)
+            if (currentEvent != null && upcomingEvent.Any())
             {
                 CurrEventName.Content = currentEvent.EventName;
                 CurrEventTime.Content = $"{currentEvent.StartTime:g} - {currentEvent.EndTime:g}";
-                UpcgName.Content = upcomingEvent.EventName;
-                UpcgTime.Content = $"{upcomingEvent.StartTime:g} - {upcomingEvent.EndTime:g}";
+
 
             }
             else
@@ -75,45 +75,6 @@ namespace WpfApp1
                 CurrEventTime.Content = string.Empty;
             }
         }
-
-        void CheckEventDetails(DateTime now, EventData eventData)
-        {
-            string EventName = eventData.EventName;
-            DateTime current = now.TrimMilliseconds();
-            DateTime InitialGoal = DateTime.Today.Add(eventData.StartTime).TrimMilliseconds();
-            DateTime EndGoal = DateTime.Today.Add(eventData.EndTime).TrimMilliseconds();
-            string EventFormat = $"{InitialGoal.ToString("hh:mm tt")} - {EndGoal.ToString("hh:mm tt")}";
-
-            if (current >= InitialGoal && current <= EndGoal)
-            {
-                CurrEventName.Content = EventName;
-                CurrEventTime.Content = EventFormat;
-
-                // Clear the "Upcoming" UI elements
-                UpcgName.Content = string.Empty;
-                UpcgTime.Content = string.Empty;
-            }
-            else if (current < InitialGoal)
-            {
-                UpcgName.Content = EventName;
-                UpcgTime.Content = EventFormat;
-
-                // Clear the "Current" UI elements
-                CurrEventName.Content = string.Empty;
-                CurrEventTime.Content = string.Empty;
-            }
-            else
-            {
-                // If current is past EndGoal, clear both UI elements
-                CurrEventName.Content = string.Empty;
-                CurrEventTime.Content = string.Empty;
-
-                UpcgName.Content = string.Empty;
-                UpcgTime.Content = string.Empty;
-            }
-        }
-
-
 
         static void LoadCSV(string filePath)
         {
