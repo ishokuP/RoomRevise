@@ -14,7 +14,7 @@
         <FontFamily x:Key="LatoBold">/Fonts/Lato/Lato-Bold.ttf#Lato</FontFamily>
     </Window.Resources>
 
-    <StackPanel>
+    <StackPanel Name="bgStack">
         <StackPanel.Background>
             <ImageBrush ImageSource="Background2.png" Stretch="UniformToFill" />
         </StackPanel.Background>

@@ -79,25 +79,28 @@ namespace WpfApp1
                 CurrEventTime.Content = Use12HourFormat
                     ? $"{ConvertTo12HourFormat(currentEvent.StartTime)} - {ConvertTo12HourFormat(currentEvent.EndTime)}"
                     : $"{currentEvent.StartTime:g} - {currentEvent.EndTime:g}";
-
-                // Populate and display upcoming events
-                foreach (var eventItem in upcomingEvent)
+                if (upcomingEvent != null)
                 {
-                    Label? upcgName = FindName($"UpcgName{upcNumber}") as Label;
-                    Label? upcgTime = FindName($"UpcgTime{upcNumber}") as Label;
-
-                    if (upcgName != null && upcgTime != null)
+                    // Populate and display upcoming events
+                    foreach (var eventItem in upcomingEvent)
                     {
-                        upcgName.Content = eventItem.EventName;
-                        upcgTime.Content = Use12HourFormat
-                            ? $"{ConvertTo12HourFormat(eventItem.StartTime)} - {ConvertTo12HourFormat(eventItem.EndTime)}"
-                            : $"{eventItem.StartTime:g} - {eventItem.EndTime:g}";
-                        upcgName.Visibility = Visibility.Visible;
-                        upcgTime.Visibility = Visibility.Visible;
-                    }
+                        Label? upcgName = FindName($"UpcgName{upcNumber}") as Label;
+                        Label? upcgTime = FindName($"UpcgTime{upcNumber}") as Label;
 
-                    upcNumber++;
+                        if (upcgName != null && upcgTime != null)
+                        {
+                            upcgName.Content = eventItem.EventName;
+                            upcgTime.Content = Use12HourFormat
+                                ? $"{ConvertTo12HourFormat(eventItem.StartTime)} - {ConvertTo12HourFormat(eventItem.EndTime)}"
+                                : $"{eventItem.StartTime:g} - {eventItem.EndTime:g}";
+                            upcgName.Visibility = Visibility.Visible;
+                            upcgTime.Visibility = Visibility.Visible;
+                        }
+
+                        upcNumber++;
+                    }
                 }
+               
 
                 // Collapse labels if there are no further upcoming events
                 for (int i = upcNumber; i <= 3; i++)
@@ -119,23 +122,27 @@ namespace WpfApp1
                 CurrEventTime.Content = "No Scheduled Event!";
 
                 // Populate and display upcoming events
-                foreach (var eventItem in upcomingEvent)
+                if (upcomingEvent != null)
                 {
-                    Label? upcgName = FindName($"UpcgName{upcNumber}") as Label;
-                    Label? upcgTime = FindName($"UpcgTime{upcNumber}") as Label;
-
-                    if (upcgName != null && upcgTime != null)
+                    foreach (var eventItem in upcomingEvent)
                     {
-                        upcgName.Content = eventItem.EventName;
-                        upcgTime.Content = Use12HourFormat
-                            ? $"{ConvertTo12HourFormat(eventItem.StartTime)} - {ConvertTo12HourFormat(eventItem.EndTime)}"
-                            : $"{eventItem.StartTime:g} - {eventItem.EndTime:g}";
-                        upcgName.Visibility = Visibility.Visible;
-                        upcgTime.Visibility = Visibility.Visible;
-                    }
+                        Label? upcgName = FindName($"UpcgName{upcNumber}") as Label;
+                        Label? upcgTime = FindName($"UpcgTime{upcNumber}") as Label;
 
-                    upcNumber++;
+                        if (upcgName != null && upcgTime != null && eventItem != null) // Check eventItem for null
+                        {
+                            upcgName.Content = eventItem.EventName; // No null-conditional operator needed
+                            upcgTime.Content = Use12HourFormat
+                                ? $"{ConvertTo12HourFormat(eventItem.StartTime)} - {ConvertTo12HourFormat(eventItem.EndTime)}"
+                                : $"{eventItem.StartTime:g} - {eventItem.EndTime:g}";
+                            upcgName.Visibility = Visibility.Visible;
+                            upcgTime.Visibility = Visibility.Visible;
+                        }
+
+                        upcNumber++;
+                    }
                 }
+
 
                 // Collapse labels if there are no further upcoming events
                 for (int i = upcNumber; i <= 3; i++)
@@ -152,6 +159,7 @@ namespace WpfApp1
             }
 
         }
+
 
         private string ConvertTo12HourFormat(TimeSpan time)
         {
@@ -260,13 +268,17 @@ namespace WpfApp1
         {
             var openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Image files (*.jpg, *.jpeg, *.png, *.gif, *.bmp)|*.jpg;*.jpeg;*.png;*.gif;*.bmp|All files (*.*)|*.*";
+
             if (openFileDialog.ShowDialog() == true)
             {
                 var imagePath = openFileDialog.FileName;
                 var bitmapImage = new BitmapImage(new Uri(imagePath));
-                this.Background = new ImageBrush(bitmapImage);
+                bgStack.Background = new ImageBrush(bitmapImage);
             }
         }
+
+
+
 
     }
 
