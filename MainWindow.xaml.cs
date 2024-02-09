@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.VisualBasic.FileIO;
+using Microsoft.Win32;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,8 +37,6 @@ namespace WpfApp1
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
             dispatcherTimer.Interval = TimeSpan.FromSeconds(1);
             dispatcherTimer.Start();
-
-
 
         }
         private void dispatcherTimer_Tick(object sender, EventArgs e)
@@ -127,9 +126,44 @@ namespace WpfApp1
             }
         }
 
+        private string ConvertTo12HourFormat(TimeSpan time)
+        {
+            return DateTime.Today.Add(time).ToString("hh:mm tt");
+        }
 
+        private void openImport(object sender, RoutedEventArgs e)
+        {
+            var filePath = String.Empty;
+            var dialog = new OpenFileDialog();
 
-            static void LoadCSV(string filePath)
+            dialog.Multiselect = false;
+            dialog.Filter = "CSV Files (*.csv)|*.csv|XML Files(*.xml)|*.xml";
+            dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            bool? results = dialog.ShowDialog();
+
+            if (results == true)
+            {
+                string dialogFile = dialog.FileName;
+                IFileImporter importer;
+                if (dialogFile.EndsWith(".csv"))
+                {
+                    importer = new CSVFileImporter();
+                } else if (dialogFile.EndsWith(".xml"))
+                {
+                    importer = new XMLFileImporter();
+
+                } else
+                {
+                    MessageBox.Show("Unsupported file type.");
+                    return;
+                }
+
+                List<EventData> eventDataList = importer.Import(filePath);
+            }
+        }
+
+        static void LoadCSV(string filePath)
         {
             eventsData = new List<EventData>();
 
@@ -137,31 +171,31 @@ namespace WpfApp1
             {
 
                 using TextFieldParser parser = new(filePath);
-                
-                    parser.TextFieldType = FieldType.Delimited;
-                    parser.SetDelimiters(",");
+
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(",");
 
                 while (!parser.EndOfData)
-                    {
+                {
                     string[]? fields = parser.ReadFields();
 
 
 
-                        if (fields.Length >= 4 && Enum.TryParse(fields[0], true, out DayOfWeek dayOfWeek)
-                            && TimeSpan.TryParse(fields[1], out TimeSpan startTime) && TimeSpan.TryParse(fields[2], out TimeSpan endTime))
+                    if (fields.Length >= 4 && Enum.TryParse(fields[0], true, out DayOfWeek dayOfWeek)
+                        && TimeSpan.TryParse(fields[1], out TimeSpan startTime) && TimeSpan.TryParse(fields[2], out TimeSpan endTime))
+                    {
+                        var eventData = new EventData
                         {
-                            var eventData = new EventData
-                            {
-                                DayOfWeek = dayOfWeek,
-                                StartTime = startTime,
-                                EndTime = endTime,
-                                EventName = fields[3]
-                            };
+                            DayOfWeek = dayOfWeek,
+                            StartTime = startTime,
+                            EndTime = endTime,
+                            EventName = fields[3]
+                        };
 
-                            eventsData.Add(eventData);
-                        }
+                        eventsData.Add(eventData);
                     }
-                
+                }
+
             }
             catch (Exception ex)
             {
@@ -169,11 +203,36 @@ namespace WpfApp1
             }
         }
 
-        private string ConvertTo12HourFormat(TimeSpan time)
-        {
-            return DateTime.Today.Add(time).ToString("hh:mm tt");
-        }
+    }
 
+
+    public interface IFileImporter
+    {
+        List<EventData> Import(string filePath);
+    }
+
+    // CSV file importer
+    public class CSVFileImporter : IFileImporter
+    {
+        public List<EventData> Import(string filePath)
+        {
+
+            List<EventData> eventDataList = new List<EventData>();
+
+            return eventDataList;
+        }
+    }
+
+    // XML file importer
+    public class XMLFileImporter : IFileImporter
+    {
+        public List<EventData> Import(string filePath)
+        {
+
+            List<EventData> eventDataList = new List<EventData>();
+
+            return eventDataList;
+        }
     }
 
 

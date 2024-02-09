@@ -14,7 +14,7 @@
         <DockPanel>
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
-                    <MenuItem Header="_Import"/>
+                    <MenuItem Header="_Import" Click="openImport"/>
                     <MenuItem Header="_Close"/>
                     <MenuItem Header="_Save"/>
                 </MenuItem>
@@ -50,7 +50,7 @@
                 </Label.Effect>
             </Label>
             <Grid>
-                <Border BorderThickness="2" BorderBrush="Black" CornerRadius="15" Background="Black" Opacity="0.5"/>
+                <Border BorderThickness="2" BorderBrush="White" CornerRadius="15" Background="Black" Opacity="0.5"/>
                 <StackPanel Margin="10,10,10,20">
                     <Label HorizontalAlignment="Left" FontSize="15"  Margin="25,0,0,0" Foreground="White" x:Name="CurrEventName" Content="Free Time"/>
                     <Label HorizontalAlignment="Center" FontSize="25"  Foreground="White" x:Name="CurrEventTime" Content="No Scheduled Event!"/>
