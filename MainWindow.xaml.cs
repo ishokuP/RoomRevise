@@ -20,7 +20,7 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const string CsvFilePath = "E:/Code/RoomRevise/sample2.csv";
+        private const string CsvFilePath = "E:/Code/RoomRevise/sample3.csv";
         private static List<EventData>? eventsData;
         private DispatcherTimer dispatcherTimer;
         public MainWindow()
@@ -29,7 +29,7 @@ namespace WpfApp1
 
             InitializeComponent();
 
-            CurrTime.Content = DateTime.Now.ToString("hh:mm ss tt");
+            CurrTime.Content = DateTime.Now.ToString("HH:mm ss tt");
             CurrDate.Content = DateTime.Now.ToString("MMMM dd, dddd");
 
             dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
@@ -43,11 +43,13 @@ namespace WpfApp1
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
 
-            CurrTime.Content = DateTime.Now.ToString("hh:mm ss tt");
+            CurrTime.Content = DateTime.Now.ToString("HH:mm ss tt");
             CurrDate.Content = DateTime.Now.ToString("MMMM dd, dddd");
 
             DateTime now = DateTime.Now;
             DayOfWeek currentDay = now.DayOfWeek;
+
+
 
             // Filter events for the current day
             var todayEvents = eventsData
@@ -59,24 +61,75 @@ namespace WpfApp1
                 now.TimeOfDay >= eventData.StartTime && now.TimeOfDay <= eventData.EndTime);
 
             var upcomingEvent = todayEvents
-                .Where(eventData => now.TimeOfDay < eventData.StartTime);
+                .Where(eventData => now.TimeOfDay <= eventData.StartTime)
+                .OrderBy(eventData => eventData.StartTime)
+                .Take(3);
 
-            if (currentEvent != null && upcomingEvent.Any())
+
+            bool Use12HourFormat = true;
+            int upcNumber = 1;
+
+            if (currentEvent != null)
             {
                 CurrEventName.Content = currentEvent.EventName;
-                CurrEventTime.Content = $"{currentEvent.StartTime:g} - {currentEvent.EndTime:g}";
+                CurrEventTime.Content = Use12HourFormat
+                    ? $"{ConvertTo12HourFormat(currentEvent.StartTime)} - {ConvertTo12HourFormat(currentEvent.EndTime)}"
+                    : $"{currentEvent.StartTime:g} - {currentEvent.EndTime:g}";
 
+                foreach (var eventItem in upcomingEvent)
+                {
+                    Label upcgName = FindName($"UpcgName{upcNumber}") as Label;
+                    Label upcgTime = FindName($"UpcgTime{upcNumber}") as Label;
 
+                    if (upcgName != null && upcgTime != null)
+                    {
+                        upcgName.Content = eventItem.EventName;
+                        upcgTime.Content = Use12HourFormat
+                            ? $"{ConvertTo12HourFormat(eventItem.StartTime)} - {ConvertTo12HourFormat(eventItem.EndTime)}"
+                            : $"{eventItem.StartTime:g} to {eventItem.EndTime:g}";
+                        upcgName.Visibility = Visibility.Visible;
+                        upcgTime.Visibility = Visibility.Visible;
+                    }
+
+                    upcNumber++;
+                }
+
+                // Collapse labels if there are no further upcoming events
+                for (int i = upcNumber; i <= 3; i++)
+                {
+                    Label upcgName = FindName($"UpcgName{i}") as Label;
+                    Label upcgTime = FindName($"UpcgTime{i}") as Label;
+
+                    if (upcgName != null && upcgTime != null)
+                    {
+                        upcgName.Visibility = Visibility.Collapsed;
+                        upcgTime.Visibility = Visibility.Collapsed;
+                    }
+                }
             }
             else
             {
-                // If no current event, clear the UI elements
-                CurrEventName.Content = string.Empty;
-                CurrEventTime.Content = string.Empty;
+                // If no current event, clear the UI elements and collapse all labels
+                CurrEventName.Content = "Free Time";
+                CurrEventTime.Content = "No Scheduled Event!";
+
+                for (int i = 1; i <= 3; i++)
+                {
+                    Label upcgName = FindName($"UpcgName{i}") as Label;
+                    Label upcgTime = FindName($"UpcgTime{i}") as Label;
+
+                    if (upcgName != null && upcgTime != null)
+                    {
+                        upcgName.Visibility = Visibility.Collapsed;
+                        upcgTime.Visibility = Visibility.Collapsed;
+                    }
+                }
             }
         }
 
-        static void LoadCSV(string filePath)
+
+
+            static void LoadCSV(string filePath)
         {
             eventsData = new List<EventData>();
 
@@ -115,7 +168,15 @@ namespace WpfApp1
                 throw new ArgumentException($"File does not {ex.Message} ");
             }
         }
+
+        private string ConvertTo12HourFormat(TimeSpan time)
+        {
+            return DateTime.Today.Add(time).ToString("hh:mm tt");
+        }
+
     }
+
+
     public static class Miliseconds
     {
         public static DateTime TrimMilliseconds(this DateTime dt)
