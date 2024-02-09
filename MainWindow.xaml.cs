@@ -1,17 +1,14 @@
 ﻿
 using Microsoft.VisualBasic.FileIO;
 using Microsoft.Win32;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Xml.Linq;
+using System.IO;
+using RoomRevise;
+using System.Windows.Media.Imaging;
+using System.Windows.Media;
 
 
 namespace WpfApp1
@@ -21,16 +18,24 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const string CsvFilePath = "E:/Code/RoomRevise/sample3.csv";
+        private const string CsvFilePath = "currentSchedule.csv";
+        private bool Use12HourFormat = true;
+
         private static List<EventData>? eventsData;
         private DispatcherTimer dispatcherTimer;
         public MainWindow()
         {
-            LoadCSV(CsvFilePath);
+            if (!File.Exists(CsvFilePath))
+            {
+                firstTimeCSV csvCreator = new firstTimeCSV();
+                csvCreator.CreateSampleCSV();
+            }
 
             InitializeComponent();
+            LoadCSV(CsvFilePath);
 
-            CurrTime.Content = DateTime.Now.ToString("HH:mm ss tt");
+
+            CurrTime.Content = DateTime.Now.ToString("HH:mm tt");
             CurrDate.Content = DateTime.Now.ToString("MMMM dd, dddd");
 
             dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
@@ -39,53 +44,54 @@ namespace WpfApp1
             dispatcherTimer.Start();
 
         }
-        private void dispatcherTimer_Tick(object sender, EventArgs e)
+        private void dispatcherTimer_Tick(object? sender, EventArgs e)
         {
+            Use12hourformat.IsChecked = Use12HourFormat;
 
-            CurrTime.Content = DateTime.Now.ToString("HH:mm ss tt");
+            CurrTime.Content = Use12HourFormat
+                ? DateTime.Now.ToString("hh:mm tt")
+                : DateTime.Now.ToString("HH:mm ");
+
             CurrDate.Content = DateTime.Now.ToString("MMMM dd, dddd");
 
             DateTime now = DateTime.Now;
             DayOfWeek currentDay = now.DayOfWeek;
 
-
-
             // Filter events for the current day
-            var todayEvents = eventsData
+            var todayEvents = eventsData?
                 .Where(eventData => eventData.DayOfWeek == currentDay)
                 .ToList();
 
             // Find the first event that is currently happening
-            var currentEvent = todayEvents.FirstOrDefault(eventData =>
+            var currentEvent = todayEvents?.FirstOrDefault(eventData =>
                 now.TimeOfDay >= eventData.StartTime && now.TimeOfDay <= eventData.EndTime);
 
-            var upcomingEvent = todayEvents
+            var upcomingEvent = todayEvents?
                 .Where(eventData => now.TimeOfDay <= eventData.StartTime)
                 .OrderBy(eventData => eventData.StartTime)
                 .Take(3);
 
-
-            bool Use12HourFormat = true;
             int upcNumber = 1;
-
             if (currentEvent != null)
             {
+                // Display current event details
                 CurrEventName.Content = currentEvent.EventName;
                 CurrEventTime.Content = Use12HourFormat
                     ? $"{ConvertTo12HourFormat(currentEvent.StartTime)} - {ConvertTo12HourFormat(currentEvent.EndTime)}"
                     : $"{currentEvent.StartTime:g} - {currentEvent.EndTime:g}";
 
+                // Populate and display upcoming events
                 foreach (var eventItem in upcomingEvent)
                 {
-                    Label upcgName = FindName($"UpcgName{upcNumber}") as Label;
-                    Label upcgTime = FindName($"UpcgTime{upcNumber}") as Label;
+                    Label? upcgName = FindName($"UpcgName{upcNumber}") as Label;
+                    Label? upcgTime = FindName($"UpcgTime{upcNumber}") as Label;
 
                     if (upcgName != null && upcgTime != null)
                     {
                         upcgName.Content = eventItem.EventName;
                         upcgTime.Content = Use12HourFormat
                             ? $"{ConvertTo12HourFormat(eventItem.StartTime)} - {ConvertTo12HourFormat(eventItem.EndTime)}"
-                            : $"{eventItem.StartTime:g} to {eventItem.EndTime:g}";
+                            : $"{eventItem.StartTime:g} - {eventItem.EndTime:g}";
                         upcgName.Visibility = Visibility.Visible;
                         upcgTime.Visibility = Visibility.Visible;
                     }
@@ -96,8 +102,8 @@ namespace WpfApp1
                 // Collapse labels if there are no further upcoming events
                 for (int i = upcNumber; i <= 3; i++)
                 {
-                    Label upcgName = FindName($"UpcgName{i}") as Label;
-                    Label upcgTime = FindName($"UpcgTime{i}") as Label;
+                    Label? upcgName = FindName($"UpcgName{i}") as Label;
+                    Label? upcgTime = FindName($"UpcgTime{i}") as Label;
 
                     if (upcgName != null && upcgTime != null)
                     {
@@ -112,10 +118,30 @@ namespace WpfApp1
                 CurrEventName.Content = "Free Time";
                 CurrEventTime.Content = "No Scheduled Event!";
 
-                for (int i = 1; i <= 3; i++)
+                // Populate and display upcoming events
+                foreach (var eventItem in upcomingEvent)
                 {
-                    Label upcgName = FindName($"UpcgName{i}") as Label;
-                    Label upcgTime = FindName($"UpcgTime{i}") as Label;
+                    Label? upcgName = FindName($"UpcgName{upcNumber}") as Label;
+                    Label? upcgTime = FindName($"UpcgTime{upcNumber}") as Label;
+
+                    if (upcgName != null && upcgTime != null)
+                    {
+                        upcgName.Content = eventItem.EventName;
+                        upcgTime.Content = Use12HourFormat
+                            ? $"{ConvertTo12HourFormat(eventItem.StartTime)} - {ConvertTo12HourFormat(eventItem.EndTime)}"
+                            : $"{eventItem.StartTime:g} - {eventItem.EndTime:g}";
+                        upcgName.Visibility = Visibility.Visible;
+                        upcgTime.Visibility = Visibility.Visible;
+                    }
+
+                    upcNumber++;
+                }
+
+                // Collapse labels if there are no further upcoming events
+                for (int i = upcNumber; i <= 3; i++)
+                {
+                    Label? upcgName = FindName($"UpcgName{i}") as Label;
+                    Label? upcgTime = FindName($"UpcgTime{i}") as Label;
 
                     if (upcgName != null && upcgTime != null)
                     {
@@ -124,6 +150,7 @@ namespace WpfApp1
                     }
                 }
             }
+
         }
 
         private string ConvertTo12HourFormat(TimeSpan time)
@@ -131,9 +158,9 @@ namespace WpfApp1
             return DateTime.Today.Add(time).ToString("hh:mm tt");
         }
 
+
         private void openImport(object sender, RoutedEventArgs e)
         {
-            var filePath = String.Empty;
             var dialog = new OpenFileDialog();
 
             dialog.Multiselect = false;
@@ -149,24 +176,32 @@ namespace WpfApp1
                 if (dialogFile.EndsWith(".csv"))
                 {
                     importer = new CSVFileImporter();
-                } else if (dialogFile.EndsWith(".xml"))
+                }
+                else if (dialogFile.EndsWith(".xml"))
                 {
                     importer = new XMLFileImporter();
-
-                } else
+                }
+                else
                 {
                     MessageBox.Show("Unsupported file type.");
                     return;
                 }
 
-                List<EventData> eventDataList = importer.Import(filePath);
+                List<EventData> eventDataList = importer.Import(dialogFile);
+
+                // Update the existing CSV file with the imported data
+                File.WriteAllLines(CsvFilePath, eventDataList.Select(eventData =>
+                    $"{eventData.DayOfWeek},{eventData.StartTime},{eventData.EndTime},{eventData.EventName}"));
+
+                // Reload the CSV data
+                LoadCSV(CsvFilePath);
             }
         }
 
         static void LoadCSV(string filePath)
         {
             eventsData = new List<EventData>();
-
+            eventsData?.Clear();
             try
             {
 
@@ -180,26 +215,56 @@ namespace WpfApp1
                     string[]? fields = parser.ReadFields();
 
 
-
-                    if (fields.Length >= 4 && Enum.TryParse(fields[0], true, out DayOfWeek dayOfWeek)
-                        && TimeSpan.TryParse(fields[1], out TimeSpan startTime) && TimeSpan.TryParse(fields[2], out TimeSpan endTime))
+                    if (fields != null)
                     {
-                        var eventData = new EventData
+                        if (fields.Length >= 4 && Enum.TryParse(fields[0], true, out DayOfWeek dayOfWeek)
+    && TimeSpan.TryParse(fields[1], out TimeSpan startTime) && TimeSpan.TryParse(fields[2], out TimeSpan endTime))
                         {
-                            DayOfWeek = dayOfWeek,
-                            StartTime = startTime,
-                            EndTime = endTime,
-                            EventName = fields[3]
-                        };
+                            var eventData = new EventData
+                            {
+                                DayOfWeek = dayOfWeek,
+                                StartTime = startTime,
+                                EndTime = endTime,
+                                EventName = fields[3]
+                            };
+                            if (eventsData != null)
+                            {
+                                eventsData.Add(eventData);
 
-                        eventsData.Add(eventData);
+                            }
+
+                        }
                     }
+
                 }
 
             }
             catch (Exception ex)
             {
                 throw new ArgumentException($"File does not {ex.Message} ");
+            }
+        }
+        private void twelvehourtoggle(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem menuItem)
+            {
+                Use12HourFormat = menuItem.IsChecked;
+            }
+        }
+
+
+
+
+
+        private void ChangeBackground(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Image files (*.jpg, *.jpeg, *.png, *.gif, *.bmp)|*.jpg;*.jpeg;*.png;*.gif;*.bmp|All files (*.*)|*.*";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                var imagePath = openFileDialog.FileName;
+                var bitmapImage = new BitmapImage(new Uri(imagePath));
+                this.Background = new ImageBrush(bitmapImage);
             }
         }
 
@@ -216,24 +281,108 @@ namespace WpfApp1
     {
         public List<EventData> Import(string filePath)
         {
-
             List<EventData> eventDataList = new List<EventData>();
+
+            try
+            {
+                using (TextFieldParser parser = new TextFieldParser(filePath))
+                {
+                    parser.TextFieldType = FieldType.Delimited;
+                    parser.SetDelimiters(",");
+
+                    // Skip the header line
+                    parser.ReadLine();
+
+                    while (!parser.EndOfData)
+                    {
+                        string[]? fields = parser.ReadFields();
+
+                        if (fields != null && fields.Length >= 4 && Enum.TryParse(fields[0], true, out DayOfWeek dayOfWeek)
+                            && TimeSpan.TryParse(fields[1], out TimeSpan startTime) && TimeSpan.TryParse(fields[2], out TimeSpan endTime))
+                        {
+                            var eventData = new EventData
+                            {
+                                DayOfWeek = dayOfWeek,
+                                StartTime = startTime,
+                                EndTime = endTime,
+                                EventName = fields[3]
+                            };
+
+                            eventDataList.Add(eventData);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error importing data: {ex.Message}", "Import Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 
             return eventDataList;
         }
     }
+
 
     // XML file importer
     public class XMLFileImporter : IFileImporter
     {
         public List<EventData> Import(string filePath)
         {
-
             List<EventData> eventDataList = new List<EventData>();
+
+            try
+            {
+                XDocument doc = XDocument.Load(filePath);
+
+                // Assuming each event is represented by an "Event" element in the XML
+                foreach (XElement element in doc.Descendants("Event"))
+                {
+                    // Parse XML attributes and populate EventData objects
+                    DayOfWeek dayOfWeek;
+                    Enum.TryParse(element.Attribute("DayOfWeek")?.Value, true, out dayOfWeek);
+
+                    TimeSpan startTime;
+                    TimeSpan.TryParse(element.Attribute("StartTime")?.Value, out startTime);
+
+                    TimeSpan endTime;
+                    TimeSpan.TryParse(element.Attribute("EndTime")?.Value, out endTime);
+
+                    string eventName = element.Element("EventName")!.Value;
+
+                    EventData eventData = new EventData
+                    {
+                        DayOfWeek = dayOfWeek,
+                        StartTime = startTime,
+                        EndTime = endTime,
+                        EventName = eventName
+                    };
+
+                    eventDataList.Add(eventData);
+                }
+
+                // Update the existing XML file with the imported data
+                doc.Descendants("Event").Remove(); // Clear existing events
+                foreach (var eventData in eventDataList)
+                {
+                    XElement newEvent = new XElement("Event",
+                        new XAttribute("DayOfWeek", eventData.DayOfWeek),
+                        new XAttribute("StartTime", eventData.StartTime),
+                        new XAttribute("EndTime", eventData.EndTime),
+                        new XElement("EventName", eventData.EventName)
+                    );
+                    doc.Root?.Add(newEvent);
+                }
+                doc.Save(filePath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error importing data: {ex.Message}", "Import Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 
             return eventDataList;
         }
     }
+
 
 
     public static class Miliseconds

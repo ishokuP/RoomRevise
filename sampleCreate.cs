@@ -1,0 +1,58 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+
+namespace RoomRevise
+{
+    internal class firstTimeCSV
+    {
+        public void CreateSampleCSV()
+        {
+            string[] lines = {
+            "Day,StartTime,EndTime,EventName",
+            "Monday,08:00:00,10:00:00,Team Meeting",
+            "Monday,10:30:00,12:30:00,Strategy Session",
+            "Monday,12:00:00,14:00:00,Client Call",
+            "Monday,15:00:00,17:00:00,Product Brainstorming",
+            "Tuesday,09:30:00,11:30:00,Project Review",
+            "Tuesday,13:00:00,15:00:00,Client Workshop",
+            "Tuesday,14:00:00,16:00:00,Training Session",
+            "Tuesday,16:30:00,18:00:00,Marketing Review",
+            "Wednesday,09:00:00,11:00:00,Board Meeting",
+            "Wednesday,11:00:00,13:00:00,Team Building",
+            "Wednesday,14:00:00,16:00:00,Team Training",
+            "Wednesday,15:00:00,17:00:00,Client Presentation",
+            "Thursday,10:00:00,12:00:00,Project Planning",
+            "Thursday,13:30:00,13:40:00,Internal Workshop",
+            "Thursday,15:27:00,15:28:00,Test Session",
+            "Thursday,16:30:00,18:30:00,Innovation Session",
+            "Thursday,18:00:00,20:00:00,Networking Event",
+            "Friday,08:00:00,10:00:00,Financial Report Analysis",
+            "Friday,10:30:00,12:30:00,Product Development Meeting",
+            "Friday,13:00:00,15:00:00,Marketing Presentation Preparation",
+            "Friday,15:30:00,17:30:00,Client Feedback Session",
+            "Friday,18:00:00,20:00:00,Team Building Exercise",
+            "Friday,21:00:00,21:30:00,Team Presentation",
+            "Friday,22:00:00,22:30:00,Client Meeting",
+            "Friday,23:00:00,23:30:00,Product Demo",
+            "Saturday,09:00:00,11:00:00,Team Bonding Activity",
+            "Saturday,03:38:00,4:48:00,Team TWO Activity",
+            "Saturday,12:00:00,14:00:00,Product Prototype Demonstration",
+            "Saturday,15:00:00,17:00:00,Marketing Campaign Planning",
+            "Saturday,18:00:00,20:00:00,Company Dinner Celebration",
+            "Sunday,09:30:00,11:30:00,Client Success Workshop",
+            "Sunday,12:30:00,14:30:00,Employee Wellness Program",
+            "Sunday,17:00:00,17:30:00,Plan RN",
+            "Sunday,15:30:00,17:30:00,Strategic Planning Retreat",
+            "Sunday,18:30:00,20:30:00,Team Appreciation Event"
+        };
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string filePath = Path.Combine(baseDirectory, "currentSchedule.csv");
+
+            File.WriteAllLines(filePath, lines);
+        }
+    }
+}

@@ -5,23 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="czlr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="Scheduler" Height="960" Width="730">
+        Title="RoomRevise" Height="960" Width="730"
+        >
+    <Window.Resources>
+        <FontFamily x:Key="Roboto">/Fonts/Roboto/Roboto-Regular.ttf#Roboto</FontFamily>
+        <FontFamily x:Key="RobotoBold">/Fonts/Roboto/Roboto-Bold.ttf#Roboto</FontFamily>
+        <FontFamily x:Key="Lato">/Fonts/Lato/Lato-Regular.ttf#Lato</FontFamily>
+        <FontFamily x:Key="LatoBold">/Fonts/Lato/Lato-Bold.ttf#Lato</FontFamily>
+    </Window.Resources>
 
     <StackPanel>
         <StackPanel.Background>
-            <ImageBrush ImageSource="E:/Code/RoomRevise/Background2.png" Stretch="UniformToFill" />
+            <ImageBrush ImageSource="Background2.png" Stretch="UniformToFill" />
         </StackPanel.Background>
         <DockPanel>
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
                     <MenuItem Header="_Import" Click="openImport"/>
-                    <MenuItem Header="_Close"/>
-                    <MenuItem Header="_Save"/>
                 </MenuItem>
                 <MenuItem Header="_Options">
-                    <MenuItem Header="_Open"/>
-                    <MenuItem Header="_Close"/>
-                    <MenuItem Header="_Save"/>
+                    <MenuItem Header="_Use 12 Hour Format" IsCheckable="True" Name="Use12hourformat" Click="twelvehourtoggle"/>
+                    <MenuItem Header="_Change Background" Click="ChangeBackground"/>
                 </MenuItem>
             </Menu>
             <StackPanel></StackPanel>
@@ -35,11 +39,12 @@
                         Opacity="0.5" 
                         BlurRadius="4"/>
             </StackPanel.Effect>
-            <Label HorizontalAlignment="Center" FontSize="100" Foreground="White" Margin="0,75" Name="CurrTime" Content="00:00" ></Label>
-            <Label HorizontalAlignment="Center" FontSize="25" Foreground="White" Margin="0,-75, 0 ,75" Name="CurrDate" Content="January 29, Monday"></Label>
+            <Label HorizontalAlignment="Center" FontFamily="{StaticResource RobotoBold}" FontSize="100" Foreground="White" Margin="0,75" Name="CurrTime" Content="00:00" ></Label>
+
+            <Label HorizontalAlignment="Center" FontFamily="{StaticResource Lato}" FontSize="25" Foreground="White" Margin="0,-75, 0 ,75" Name="CurrDate" Content="January 29, Monday"></Label>
         </StackPanel>
         <StackPanel Margin="25, 0, 25 ,0">
-            <Label HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="25" Foreground="White" Name="CurrEventTitle" Content="Current Event">
+            <Label HorizontalAlignment="Left" FontFamily="{StaticResource LatoBold}" VerticalAlignment="Top" FontSize="25" Foreground="White" Name="CurrEventTitle" Content="Current Event" >
                                 <Label.Effect>
                     <DropShadowEffect 
                         ShadowDepth="4" 
@@ -52,15 +57,15 @@
             <Grid>
                 <Border BorderThickness="2" BorderBrush="White" CornerRadius="15" Background="Black" Opacity="0.5"/>
                 <StackPanel Margin="10,10,10,20">
-                    <Label HorizontalAlignment="Left" FontSize="15"  Margin="25,0,0,0" Foreground="White" x:Name="CurrEventName" Content="Free Time"/>
-                    <Label HorizontalAlignment="Center" FontSize="25"  Foreground="White" x:Name="CurrEventTime" Content="No Scheduled Event!"/>
+                    <Label HorizontalAlignment="Left" FontFamily="{StaticResource LatoBold}"  FontSize="15"  Margin="25,0,0,0" Foreground="White" x:Name="CurrEventName" Content="Free Time"/>
+                    <Label HorizontalAlignment="Center" FontFamily="{StaticResource Roboto}" FontSize="25"  Foreground="White" x:Name="CurrEventTime" Content="No Scheduled Event!"/>
                 </StackPanel>
             </Grid>
         </StackPanel>
 
 
         <StackPanel Margin="25, 100, 25 ,0">
-            <Label HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="25"  Foreground="White"  >Upcoming Event
+            <Label HorizontalAlignment="Left" FontFamily="{StaticResource LatoBold}"  VerticalAlignment="Top" FontSize="25"  Foreground="White"  >Upcoming Event
                 <Label.Effect>
                     <DropShadowEffect 
                         ShadowDepth="4" 
@@ -73,23 +78,17 @@
             <Grid>
                 <Border BorderThickness="2" CornerRadius="15" Background="White" Opacity="0.7"/>
                 <StackPanel Margin="10,10,10,20">
-                    <Label HorizontalAlignment="Left" FontSize="15"  Margin="25,0,0,0" Foreground="Black" Name="UpcgName1" Visibility="Visible"  Content="Free Time"/>
-                    <Label HorizontalAlignment="Center" FontSize="25"  Foreground="Black" Margin="0,0,0,5" Name="UpcgTime1" Visibility="Visible"  Content="No Scheduled Event!"/>
-                    <Label HorizontalAlignment="Left" FontSize="15"  Margin="25,0,0,0" Foreground="Black" Name="UpcgName2" Visibility="Visible"  Content="Free Time"/>
-                    <Label HorizontalAlignment="Center" FontSize="25"  Foreground="Black" Margin="0,0,0,5" Name="UpcgTime2" Visibility="Visible"  Content="No Scheduled Event!"/>
-                    <Label HorizontalAlignment="Left" FontSize="15"  Margin="25,0,0,0" Foreground="Black" Name="UpcgName3" Visibility="Visible"  Content="Free Time"/>
-                    <Label HorizontalAlignment="Center" FontSize="25"  Foreground="Black" Margin="0,0,0,5" Name="UpcgTime3" Visibility="Visible" Content="No Scheduled Event!"/>
+                    <Label HorizontalAlignment="Left" FontFamily="{StaticResource LatoBold}"  FontSize="15"  Margin="25,0,0,0" Foreground="Black" Name="UpcgName1" Visibility="Visible"  Content="Free Time"/>
+                    <Label HorizontalAlignment="Center" FontFamily="{StaticResource Roboto}" FontSize="25"  Foreground="Black" Margin="0,0,0,5" Name="UpcgTime1" Visibility="Visible"  Content="No Scheduled Event!"/>
+                    <Label HorizontalAlignment="Left" FontFamily="{StaticResource LatoBold}"  FontSize="15"  Margin="25,0,0,0" Foreground="Black" Name="UpcgName2" Visibility="Visible"  Content="Free Time"/>
+                    <Label HorizontalAlignment="Center" FontFamily="{StaticResource Roboto}"  FontSize="25"  Foreground="Black" Margin="0,0,0,5" Name="UpcgTime2" Visibility="Visible"  Content="No Scheduled Event!"/>
+                    <Label HorizontalAlignment="Left" FontFamily="{StaticResource LatoBold}"  FontSize="15"  Margin="25,0,0,0" Foreground="Black" Name="UpcgName3" Visibility="Visible"  Content="Free Time"/>
+                    <Label HorizontalAlignment="Center" FontFamily="{StaticResource Roboto}" FontSize="25"  Foreground="Black" Margin="0,0,0,5" Name="UpcgTime3" Visibility="Visible" Content="No Scheduled Event!"/>
                 </StackPanel>
             </Grid>
         </StackPanel>
 
     </StackPanel>
-
-
-
-
-
-
 
 
 </Window>
