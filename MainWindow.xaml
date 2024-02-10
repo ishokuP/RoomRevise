@@ -6,6 +6,7 @@
         xmlns:local="czlr-namespace:WpfApp1"
         mc:Ignorable="d"
         Title="RoomRevise" Height="960" Width="730"
+        Icon="/Assets/icon.ico"
         >
     <Window.Resources>
         <FontFamily x:Key="Roboto">/Fonts/Roboto/Roboto-Regular.ttf#Roboto</FontFamily>

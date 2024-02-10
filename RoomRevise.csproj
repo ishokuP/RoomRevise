@@ -32,4 +32,9 @@
     </Compile>
   </ItemGroup>
 
+	<ItemGroup>
+		<Folder Include="Assets\" />
+		<Resource Include="Assets/icon.ico" />
+	</ItemGroup>
+
 </Project>
